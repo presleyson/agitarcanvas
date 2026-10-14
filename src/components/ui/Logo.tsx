@@ -1,14 +1,25 @@
 import styles from './Logo.module.css';
 
-/** Símbolo da marca: os blocos do canvas reunidos em um único quadro. */
+/**
+ * Símbolo da marca: a figura do framework (cinco colunas, Mercado/Problema
+ * empilhados e a base). O bloco 1, Planejamento Estratégico, onde o método
+ * começa, é o único aceso.
+ */
 export function LogoMark({ size = 32 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" aria-hidden focusable="false">
-      <rect width="32" height="32" rx="8" fill="#10173A" />
-      <rect x="7" y="7" width="7.5" height="11" rx="2" fill="#F6B73C" />
-      <rect x="17.5" y="7" width="7.5" height="4.5" rx="2" fill="#7C8CFF" />
-      <rect x="17.5" y="13.5" width="7.5" height="4.5" rx="2" fill="#4FD1B5" />
-      <rect x="7" y="20.5" width="18" height="4.5" rx="2" fill="#FFFFFF" />
+      <rect width="32" height="32" rx="8" fill="#11131A" />
+      <g fill="#454B5B">
+        <rect x="6" y="6" width="2.6" height="12.6" rx="0.8" />
+        <rect x="9.4" y="6" width="2.6" height="12.6" rx="0.8" />
+        <rect x="12.8" y="6" width="2.6" height="12.6" rx="0.8" />
+        <rect x="16.2" y="6" width="2.6" height="12.6" rx="0.8" />
+        <rect x="19.6" y="6" width="2.6" height="12.6" rx="0.8" />
+        <rect x="23" y="6" width="3" height="5.9" rx="0.8" />
+        <rect x="23" y="12.7" width="3" height="5.9" rx="0.8" />
+        <rect x="6" y="19.6" width="9.4" height="6.4" rx="0.8" />
+      </g>
+      <rect x="16.2" y="19.6" width="9.8" height="6.4" rx="0.8" fill="#C8F03C" />
     </svg>
   );
 }

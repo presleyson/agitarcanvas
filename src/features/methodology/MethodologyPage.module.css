@@ -70,7 +70,7 @@
   height: 40px;
   border-radius: var(--radius-md);
   background: var(--ink-900);
-  color: var(--white);
+  color: var(--on-dark);
   font-family: var(--font-serif);
   font-size: var(--text-xl);
   font-weight: 600;

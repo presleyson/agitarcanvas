@@ -3,7 +3,7 @@ import { STATUS_LABEL } from '@/domain/types';
 import { formatDateTime, formatLongDate } from '@/lib/dates';
 import { BLOCKS_BY_STEP, CANVAS_LAYOUT, GROUPS, getBlock, type BlockId } from '@/methodology/agitar';
 import { notesByBlock, type ExportData } from './data';
-import { COLORS, GROUP_COLORS, INSTITUTIONAL_FOOTER } from './theme';
+import { COLORS, GROUP_COLORS, INSTITUTIONAL_FOOTER, FONT_SANS, FONT_SERIF } from './theme';
 
 /**
  * Relatório A4 (retrato): identificação do projeto, visão geral do canvas e o
@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
     paddingTop: 44,
     paddingBottom: 54,
     paddingHorizontal: 44,
-    fontFamily: 'Inter',
+    fontFamily: FONT_SANS,
     fontSize: 9.5,
     color: COLORS.text,
     // A altura de linha é definida em cada estilo de texto. Declarada aqui,
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
   },
   brandName: { fontSize: 10, fontWeight: 700, letterSpacing: 1.2 },
   brandDoc: { fontSize: 8.5, opacity: 0.8 },
-  title: { marginTop: 26, fontFamily: 'Source Serif', fontWeight: 600, fontSize: 24, lineHeight: 1.2 },
+  title: { marginTop: 26, fontFamily: FONT_SERIF, fontWeight: 600, fontSize: 24, lineHeight: 1.2 },
   organization: { marginTop: 4, fontSize: 12, color: COLORS.muted },
   description: { marginTop: 12, fontSize: 10, lineHeight: 1.5, color: '#454a61' },
   meta: {
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     fontWeight: 700,
     paddingTop: 2.5,
   },
-  blockTitle: { flex: 1, fontFamily: 'Source Serif', fontWeight: 600, fontSize: 14 },
+  blockTitle: { flex: 1, fontFamily: FONT_SERIF, fontWeight: 600, fontSize: 14 },
   blockGroup: { marginTop: 4, fontSize: 7.5, color: COLORS.subtle, letterSpacing: 0.6, textTransform: 'uppercase' },
   guidance: { marginTop: 6, fontSize: 8.5, lineHeight: 1.45, color: COLORS.muted },
   note: {

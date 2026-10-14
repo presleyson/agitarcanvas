@@ -4,7 +4,7 @@ import { formatLongDate } from '@/lib/dates';
 import { CANVAS_LAYOUT, getBlock, type BlockId } from '@/methodology/agitar';
 import { notesByBlock, type ExportData } from './data';
 import { NOTE_GAP, NOTE_PADDING_X, NOTE_PADDING_Y, fitCanvas, type BlockBox } from './fit';
-import { COLORS, GROUP_COLORS, INSTITUTIONAL_FOOTER } from './theme';
+import { COLORS, GROUP_COLORS, INSTITUTIONAL_FOOTER, FONT_SANS, FONT_SERIF } from './theme';
 
 /**
  * Canvas em página única (A3 ou A4, paisagem), na disposição do modelo. É o
@@ -92,10 +92,10 @@ function computeLayout(metrics: Metrics): Layout {
 const ORDER: BlockId[] = [...CANVAS_LAYOUT.columns, ...CANVAS_LAYOUT.side, ...CANVAS_LAYOUT.base];
 
 const styles = StyleSheet.create({
-  page: { fontFamily: 'Inter', color: COLORS.text },
+  page: { fontFamily: FONT_SANS, color: COLORS.text },
   header: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' },
   brand: { fontWeight: 700, letterSpacing: 1.2, color: COLORS.primary },
-  title: { fontFamily: 'Source Serif', fontWeight: 600, lineHeight: 1.15 },
+  title: { fontFamily: FONT_SERIF, fontWeight: 600, lineHeight: 1.15 },
   metaRow: { flexDirection: 'row' },
   metaItem: { alignItems: 'flex-end' },
   metaLabel: { fontWeight: 600, letterSpacing: 0.7, textTransform: 'uppercase', color: COLORS.subtle },

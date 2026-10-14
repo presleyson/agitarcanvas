@@ -1,90 +1,101 @@
 /*
- * Design System AGITAR Canvas — tokens
+ * Design System AGITAR Canvas: tokens (v3, "Método visível")
  *
- * Toda cor, medida e sombra usada na interface vem deste arquivo. Componentes
- * nunca declaram valores literais; assim a identidade pode evoluir em um só
- * lugar.
+ * Toda cor, medida e sombra usada na interface vem deste arquivo. Os nomes
+ * da v2 foram mantidos para que todos os componentes adotem a nova
+ * identidade sem alterações; o tema escuro remapeia as mesmas variáveis.
  */
 
 :root {
   /* Marca */
-  --ink-900: #10173a;
-  --ink-800: #1a2250;
-  --ink-700: #283266;
+  --ink-900: #11131a;
+  --ink-800: #1c1f28;
+  --ink-700: #2a2e3a;
+  --accent-lime: #c8f03c;
+  --accent-lime-ink: #1d2408;
 
-  --primary-700: #2b39b8;
-  --primary-600: #3646d4;
-  --primary-500: #4a5bea;
-  --primary-200: #c9cffb;
-  --primary-100: #e6e9ff;
-  --primary-50: #f2f4ff;
+  --primary-700: #1f2ab0;
+  --primary-600: #2c39e0;
+  --primary-500: #4651ee;
+  --primary-200: #c9cdfb;
+  --primary-100: #e3e5fd;
+  --primary-50: #ecedfe;
 
-  /* Neutros */
-  --gray-900: #171a2b;
-  --gray-800: #2a2e42;
-  --gray-700: #454a61;
-  --gray-600: #5d627a;
-  --gray-500: #7e839a;
-  --gray-400: #a6aabd;
-  --gray-300: #cfd2de;
-  --gray-200: #e3e5ed;
-  --gray-100: #eff0f5;
-  --gray-50: #f7f7fa;
+  /* Neutros quentes (papel), recalibrados para contraste AA */
+  --gray-900: #11131a;
+  --gray-800: #262a35;
+  --gray-700: #3d4250;
+  --gray-600: #535867; /* 7,0:1 sobre branco */
+  --gray-500: #676c7b; /* 5,2:1 sobre branco */
+  --gray-400: #9a9eaa;
+  --gray-300: #d4d0c4;
+  --gray-200: #e6e3da;
+  --gray-100: #efede7;
+  --gray-50: #f6f5f1;
   --white: #ffffff;
 
-  /* Dimensões do canvas (agrupamento visual dos blocos) */
-  --group-estrategia: #3646d4;
-  --group-estrategia-soft: #e9ecff;
-  --group-estrategia-ink: #1f2b96;
-  --group-contexto: #d9543f;
-  --group-contexto-soft: #fdece8;
+  /* Famílias do canvas (recurso de interface, não integra o modelo original) */
+  --group-estrategia: #3b4bf5;
+  --group-estrategia-soft: #e9ebfe;
+  --group-estrategia-ink: #2330b8;
+  --group-contexto: #e5533d;
+  --group-contexto-soft: #fceae6;
   --group-contexto-ink: #9c3323;
   --group-ideias: #d99a06;
-  --group-ideias-soft: #fff4d6;
-  --group-ideias-ink: #8a5f00;
-  --group-recursos: #128f7a;
-  --group-recursos-soft: #dff5f0;
+  --group-ideias-soft: #fbf0d4;
+  --group-ideias-ink: #85540a;
+  --group-recursos: #0f9d84;
+  --group-recursos-soft: #ddf3ee;
   --group-recursos-ink: #0b6152;
 
   /* Notas */
-  --note-bg: #fff8dc;
-  --note-border: #f0dc9a;
-  --note-bg-hover: #fff3c4;
+  --note-bg: #fffaf0;
+  --note-border: #ece3cc;
+  --note-bg-hover: #fff5dc;
 
   /* Semânticas */
-  --success-600: #12805c;
-  --success-100: #dcf5ea;
-  --warning-700: #8a5a00;
-  --warning-100: #fff1cc;
-  --danger-700: #a3261c;
-  --danger-600: #c93a2e;
-  --danger-100: #fde7e4;
+  --success-600: #12a06e;
+  --success-100: #e2f3ea;
+  --success-ink: #0d6a4a;
+  --warning-700: #85540a;
+  --warning-100: #fbf0d6;
+  --danger-700: #9a2a20;
+  --danger-600: #c2362b;
+  --danger-100: #fce8e5;
   --info-100: var(--primary-100);
 
   /* Papéis de superfície e texto */
   --bg: var(--gray-50);
   --surface: var(--white);
+  --surface-2: #faf9f6;
   --surface-sunken: var(--gray-100);
+  --surface-header: rgba(250, 249, 246, 0.88);
   --border: var(--gray-200);
   --border-strong: var(--gray-300);
   --text: var(--gray-900);
   --text-muted: var(--gray-600);
   --text-subtle: var(--gray-500);
-  --focus-ring: 0 0 0 3px rgba(74, 91, 234, 0.35);
+  --on-primary: #ffffff;
+  /* Texto sobre superfícies sempre escuras (grafite), nos dois temas. */
+  --on-dark: #ffffff;
+  --surface-inverse: var(--ink-900);
+  --overlay: rgba(17, 19, 26, 0.45);
+  --focus-ring: 0 0 0 3px rgba(44, 57, 224, 0.32);
 
   /* Tipografia */
-  --font-sans: 'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --font-serif: 'Source Serif 4 Variable', 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Geist Variable', 'Geist', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-serif: 'Newsreader Variable', 'Newsreader', Georgia, 'Times New Roman', serif;
+  --font-mono: 'Geist Mono Variable', 'Geist Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
   --text-xs: 0.75rem;
   --text-sm: 0.8125rem;
-  --text-md: 0.875rem;
+  --text-md: 0.9375rem; /* corpo da UI: 15px (antes 14px) */
   --text-base: 1rem;
   --text-lg: 1.125rem;
   --text-xl: 1.375rem;
   --text-2xl: 1.75rem;
-  --text-3xl: 2.25rem;
-  --text-4xl: 3rem;
+  --text-3xl: 2.375rem;
+  --text-4xl: 3.25rem;
 
   /* Espaçamento (base 4px) */
   --space-1: 0.25rem;
@@ -100,25 +111,91 @@
 
   /* Forma */
   --radius-sm: 6px;
-  --radius-md: 10px;
+  --radius-md: 9px;
   --radius-lg: 14px;
-  --radius-xl: 20px;
+  --radius-xl: 18px;
   --radius-full: 999px;
 
-  --shadow-xs: 0 1px 2px rgba(16, 23, 58, 0.06);
-  --shadow-sm: 0 1px 3px rgba(16, 23, 58, 0.08), 0 1px 2px rgba(16, 23, 58, 0.04);
-  --shadow-md: 0 6px 16px rgba(16, 23, 58, 0.08), 0 2px 4px rgba(16, 23, 58, 0.04);
-  --shadow-lg: 0 18px 40px rgba(16, 23, 58, 0.16), 0 4px 10px rgba(16, 23, 58, 0.06);
+  --shadow-xs: 0 1px 2px rgba(17, 19, 26, 0.05);
+  --shadow-sm: 0 1px 3px rgba(17, 19, 26, 0.07), 0 1px 2px rgba(17, 19, 26, 0.04);
+  --shadow-md: 0 10px 28px rgba(17, 19, 26, 0.09), 0 2px 6px rgba(17, 19, 26, 0.05);
+  --shadow-lg: 0 24px 56px rgba(17, 19, 26, 0.16), 0 4px 12px rgba(17, 19, 26, 0.06);
 
   /* Movimento */
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
   --duration-fast: 120ms;
   --duration: 200ms;
+  --duration-slow: 320ms;
 
   /* Estrutura */
   --header-height: 60px;
-  --content-width: 1180px;
+  --content-width: 1240px;
   --z-header: 20;
   --z-overlay: 50;
   --z-toast: 70;
+
+  color-scheme: light;
+}
+
+/*
+ * Tema escuro. Aplicado por data-theme="dark" no <html> (escolha do usuário)
+ * ou pela preferência do sistema quando não há escolha salva. Vale só para a
+ * tela: a impressão usa sempre o tema claro.
+ */
+@media screen {
+  :root[data-theme='dark'] {
+    --primary-700: #c3c8ff;
+    --primary-600: #8089ff;
+    --primary-500: #9aa1ff;
+    --primary-200: #3a418c;
+    --primary-100: #242a66;
+    --primary-50: #1d2150;
+
+    --gray-900: #ecedf1;
+    --gray-800: #d6d8df;
+    --gray-700: #bfc2cc;
+    --gray-600: #a6abb8;
+    --gray-500: #959aa8;
+    --gray-400: #6c7282;
+    --gray-300: #363c4a;
+    --gray-200: #262b36;
+    --gray-100: #1e222c;
+    --gray-50: #0c0e13;
+    --white: #14171f;
+
+    --group-estrategia-soft: rgba(59, 75, 245, 0.18);
+    --group-estrategia-ink: #b9c0ff;
+    --group-contexto-soft: rgba(229, 83, 61, 0.18);
+    --group-contexto-ink: #ffb4a8;
+    --group-ideias-soft: rgba(217, 154, 6, 0.18);
+    --group-ideias-ink: #f1c468;
+    --group-recursos-soft: rgba(15, 157, 132, 0.18);
+    --group-recursos-ink: #7edcc8;
+
+    --note-bg: #1c1f27;
+    --note-border: #2e3340;
+    --note-bg-hover: #222632;
+
+    --success-100: #0f2d22;
+    --success-ink: #7eddb4;
+    --warning-700: #f1c468;
+    --warning-100: #33270c;
+    --danger-700: #ff8a7e;
+    --danger-600: #ff8a7e;
+    --danger-100: #3a1816;
+
+    --surface-2: #181b23;
+    --surface-header: rgba(12, 14, 19, 0.82);
+    --on-primary: #0b0d1f;
+    --surface-inverse: #262b36;
+    --overlay: rgba(0, 0, 0, 0.6);
+    --focus-ring: 0 0 0 3px rgba(128, 137, 255, 0.45);
+
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.45);
+    --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 24px 56px rgba(0, 0, 0, 0.6);
+
+    color-scheme: dark;
+  }
 }

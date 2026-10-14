@@ -50,7 +50,7 @@
 
 .primary {
   background: var(--primary-600);
-  color: var(--white);
+  color: var(--on-primary);
   box-shadow: var(--shadow-xs);
 }
 
@@ -81,7 +81,7 @@
 
 .danger {
   background: var(--danger-600);
-  color: var(--white);
+  color: var(--on-primary);
 }
 
 .danger:hover:not(:disabled) {

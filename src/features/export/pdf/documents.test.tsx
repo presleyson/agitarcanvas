@@ -17,15 +17,15 @@ vi.mock('./theme', async (original) => {
 
 const fonts = 'node_modules/@fontsource';
 Font.register({
-  family: 'Inter',
+  family: 'Geist',
   fonts: [400, 600, 700].map((weight) => ({
-    src: `${fonts}/inter/files/inter-latin-${weight}-normal.woff`,
+    src: `${fonts}/geist/files/geist-latin-${weight}-normal.woff`,
     fontWeight: weight,
   })),
 });
 Font.register({
-  family: 'Source Serif',
-  fonts: [{ src: `${fonts}/source-serif-4/files/source-serif-4-latin-600-normal.woff`, fontWeight: 600 }],
+  family: 'Newsreader',
+  fonts: [{ src: `${fonts}/newsreader/files/newsreader-latin-600-normal.woff`, fontWeight: 600 }],
 });
 Font.registerHyphenationCallback((word) => [word]);
 

@@ -11,7 +11,7 @@
   top: 0;
   z-index: var(--z-header);
   border-bottom: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.94);
+  background: var(--surface-header);
   backdrop-filter: saturate(1.4) blur(10px);
   padding-top: env(safe-area-inset-top);
 }

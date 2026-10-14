@@ -5,7 +5,7 @@
   flex: none;
   overflow: hidden;
   border-radius: 50%;
-  color: var(--white);
+  color: var(--on-dark);
   font-weight: 600;
   line-height: 1;
   letter-spacing: 0.02em;

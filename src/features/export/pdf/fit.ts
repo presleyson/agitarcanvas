@@ -7,7 +7,10 @@
  * documento informa que o conteúdo completo está no relatório A4.
  */
 
-/** Largura média de um caractere em Inter, como fração do tamanho da fonte. */
+/**
+ * Largura média de um caractere, como fração do tamanho da fonte. O valor é
+ * conservador para Geist (cerca de 0,48 em texto corrido em português).
+ */
 const AVERAGE_CHAR_WIDTH = 0.54;
 const LINE_HEIGHT = 1.32;
 

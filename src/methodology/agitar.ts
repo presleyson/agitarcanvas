@@ -263,7 +263,7 @@ export function getBlock(id: BlockId): BlockDefinition {
 }
 
 export function isBlockId(value: unknown): value is BlockId {
-  return typeof value === 'string' && value in BY_ID;
+  return typeof value === 'string' && Object.prototype.hasOwnProperty.call(BY_ID, value);
 }
 
 /** Blocos na ordem de preenchimento recomendada pela metodologia. */

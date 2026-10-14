@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router';
 import {
   Archive,
   ArchiveRestore,
@@ -30,7 +30,7 @@ import { ROLE_LABEL, STATUS_LABEL, canEdit, canManage, type Note, type Person, t
 import { errorMessage } from '@/lib/errors';
 import { readJson, writeJson } from '@/lib/storage';
 import { AppFooter } from '@/layout/AppShell';
-import { BLOCKS, getBlock, type BlockId } from '@/methodology/agitar';
+import { BLOCKS, getBlock, isBlockId, type BlockId } from '@/methodology/agitar';
 import { useProjectSession } from '@/state/useProjectSession';
 import { ExportMenu } from '../export/ExportMenu';
 import { HistoryDrawer } from '../history/HistoryDrawer';
@@ -66,8 +66,12 @@ export function WorkspacePage() {
   const { session, snapshot } = useProjectSession(projectId, notify);
   const { project, notes, readOnly } = snapshot;
 
-  const [view, setView] = useState<View>(() => readJson<View>(VIEW_KEY, 'canvas'));
-  const [activeStep, setActiveStep] = useState<BlockId>('planejamento');
+  const [searchParams] = useSearchParams();
+  /** Etapa pedida no endereço (por exemplo, pelo atalho "Próxima etapa" em Meus Projetos). */
+  const requestedStep = searchParams.get('etapa');
+  const initialStep = isBlockId(requestedStep) ? requestedStep : null;
+  const [view, setView] = useState<View>(() => (initialStep ? 'steps' : readJson<View>(VIEW_KEY, 'canvas')));
+  const [activeStep, setActiveStep] = useState<BlockId>(initialStep ?? 'planejamento');
   const [editingNoteId, setEditingNoteId] = useState<string | null>(null);
   /** Notas criadas nesta tela que ainda não receberam texto. */
   const createdBlank = useRef(new Set<string>());

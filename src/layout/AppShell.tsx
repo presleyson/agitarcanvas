@@ -1,8 +1,8 @@
 import { useState, type ReactNode } from 'react';
 import { Link, NavLink } from 'react-router';
-import { BookOpen, HardDrive, LayoutGrid, LogOut, UserRound } from 'lucide-react';
+import { BookOpen, HardDrive, LayoutGrid, LogOut, Moon, Sun, UserRound } from 'lucide-react';
 import { Avatar } from '@/components/ui/Avatar';
-import { Button } from '@/components/ui/Button';
+import { Button, IconButton } from '@/components/ui/Button';
 import { Dialog } from '@/components/ui/Dialog';
 import { Field, Input } from '@/components/ui/Field';
 import { Logo } from '@/components/ui/Logo';
@@ -10,6 +10,7 @@ import { Menu } from '@/components/ui/Menu';
 import { useToast } from '@/components/ui/Toast';
 import { cx } from '@/lib/cx';
 import { errorMessage } from '@/lib/errors';
+import { useTheme } from '@/lib/theme';
 import { useAuth, useRepository } from '@/state/RepositoryContext';
 import styles from './AppShell.module.css';
 
@@ -27,6 +28,16 @@ export function AppShell({ children, width = 'content' }: AppShellProps) {
       <main className={cx(styles.main, width === 'content' && styles.contained)}>{children}</main>
       <AppFooter />
     </>
+  );
+}
+
+export function ThemeToggle() {
+  const { theme, toggle } = useTheme();
+  const dark = theme === 'dark';
+  return (
+    <IconButton label={dark ? 'Usar tema claro' : 'Usar tema escuro'} onClick={toggle}>
+      {dark ? <Sun size={18} aria-hidden /> : <Moon size={18} aria-hidden />}
+    </IconButton>
   );
 }
 
@@ -56,10 +67,12 @@ export function AppHeader() {
         <div className={styles.account}>
           {repository.mode === 'local' && (
             <span className={styles.mode} title="Os dados ficam salvos apenas neste navegador">
+              <span className={styles.modeDot} aria-hidden />
               <HardDrive size={14} aria-hidden />
               <span>Modo local</span>
             </span>
           )}
+          <ThemeToggle />
           {status === 'signed_in' && user && (
             <Menu
               trigger={

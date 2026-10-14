@@ -45,7 +45,7 @@ test.describe('Meus Projetos', () => {
     await page.getByRole('button', { name: 'Ações do projeto Projeto Original' }).click();
     await page.getByRole('menuitem', { name: 'Editar dados' }).click();
     await page.getByLabel('Nome do projeto').fill('Projeto Renomeado');
-    await page.getByLabel('Status').selectOption('active');
+    await page.getByLabel('Status', { exact: true }).selectOption('active');
     await page.getByRole('button', { name: 'Salvar alterações' }).click();
     await expect(page.locator('article h2')).toHaveText(['Projeto Renomeado']);
     await expect(page.locator('article').getByText('Em andamento')).toBeVisible();

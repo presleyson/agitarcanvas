@@ -1,13 +1,13 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { FolderOpen, HardDrive, Plus, Search, SearchX, WifiOff } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
+import { FolderOpen, HardDrive, Plus, Search, SearchX, WifiOff, X } from 'lucide-react';
+import { Button, IconButton } from '@/components/ui/Button';
 import { ConfirmDialog } from '@/components/ui/Dialog';
 import { Banner, EmptyState, Skeleton } from '@/components/ui/Feedback';
 import { Select } from '@/components/ui/Field';
 import { Segmented } from '@/components/ui/Segmented';
 import { useToast } from '@/components/ui/Toast';
-import type { ProjectInput, ProjectSummary } from '@/domain/types';
+import { STATUS_LABEL, type ProjectInput, type ProjectStatus, type ProjectSummary } from '@/domain/types';
 import { errorMessage } from '@/lib/errors';
 import { AppShell } from '@/layout/AppShell';
 import { ReceivedInvites } from '@/features/sharing/ReceivedInvites';
@@ -18,6 +18,10 @@ import styles from './ProjectsPage.module.css';
 
 type Filter = 'active' | 'archived';
 type Sort = 'updated' | 'name' | 'created';
+type StatusFilter = 'all' | ProjectStatus;
+
+const STATUS_FILTERS: StatusFilter[] = ['all', 'draft', 'active', 'done'];
+const LOCAL_NOTICE_KEY = 'agitar:local-notice-dismissed';
 
 const SORTERS: Record<Sort, (a: ProjectSummary, b: ProjectSummary) => number> = {
   updated: (a, b) => b.updatedAt.localeCompare(a.updatedAt),
@@ -28,8 +32,21 @@ const SORTERS: Record<Sort, (a: ProjectSummary, b: ProjectSummary) => number> = 
 function normalize(text: string): string {
   return text
     .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
+    .replace(/[\u0300-\u036f]/g, '')
     .toLocaleLowerCase('pt-BR');
+}
+
+function isTyping(target: EventTarget | null): boolean {
+  if (!(target instanceof HTMLElement)) return false;
+  return target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName);
+}
+
+function readDismissed(): boolean {
+  try {
+    return localStorage.getItem(LOCAL_NOTICE_KEY) === '1';
+  } catch {
+    return false;
+  }
 }
 
 type Pending = { action: 'delete' | 'leave' | 'archive'; project: ProjectSummary } | null;
@@ -39,16 +56,19 @@ export function ProjectsPage() {
   const repository = useRepository();
   const navigate = useNavigate();
   const toast = useToast();
+  const searchRef = useRef<HTMLInputElement>(null);
 
   const [projects, setProjects] = useState<ProjectSummary[] | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState<Filter>('active');
+  const [status, setStatus] = useState<StatusFilter>('all');
   const [sort, setSort] = useState<Sort>('updated');
   const [creating, setCreating] = useState(false);
   const [editing, setEditing] = useState<ProjectSummary | null>(null);
   const [pending, setPending] = useState<Pending>(null);
   const [working, setWorking] = useState(false);
+  const [noticeDismissed, setNoticeDismissed] = useState(readDismissed);
 
   const load = useCallback(async () => {
     setLoadError(null);
@@ -67,6 +87,25 @@ export function ProjectsPage() {
     return () => document.removeEventListener('visibilitychange', onFocus);
   }, [load]);
 
+  // Atalhos: N cria um projeto; / leva à pesquisa.
+  useEffect(() => {
+    function onKey(event: KeyboardEvent) {
+      if (event.defaultPrevented || event.repeat || event.metaKey || event.ctrlKey || event.altKey) return;
+      if (isTyping(event.target)) return;
+      // Com um diálogo ou menu aberto, as teclas pertencem a ele.
+      if (document.querySelector('[role="dialog"], [role="alertdialog"], [role="menu"]')) return;
+      if (event.key === 'n' || event.key === 'N') {
+        event.preventDefault();
+        setCreating(true);
+      } else if (event.key === '/') {
+        event.preventDefault();
+        searchRef.current?.focus();
+      }
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
   const counts = useMemo(
     () => ({
       active: projects?.filter((project) => !project.archivedAt).length ?? 0,
@@ -75,11 +114,21 @@ export function ProjectsPage() {
     [projects],
   );
 
+  const inFilter = useMemo(
+    () => (projects ?? []).filter((project) => (filter === 'archived' ? project.archivedAt !== null : project.archivedAt === null)),
+    [projects, filter],
+  );
+
+  const statusCounts = useMemo(() => {
+    const result: Record<StatusFilter, number> = { all: inFilter.length, draft: 0, active: 0, done: 0 };
+    for (const project of inFilter) result[project.status] += 1;
+    return result;
+  }, [inFilter]);
+
   const visible = useMemo(() => {
-    if (!projects) return [];
     const term = normalize(query.trim());
-    return projects
-      .filter((project) => (filter === 'archived' ? project.archivedAt !== null : project.archivedAt === null))
+    return inFilter
+      .filter((project) => status === 'all' || project.status === status)
       .filter(
         (project) =>
           !term ||
@@ -88,7 +137,7 @@ export function ProjectsPage() {
           ),
       )
       .sort(SORTERS[sort]);
-  }, [projects, query, filter, sort]);
+  }, [inFilter, query, status, sort]);
 
   async function create(input: ProjectInput) {
     const project = await repository.createProject(input);
@@ -139,25 +188,66 @@ export function ProjectsPage() {
     }
   }
 
+  function dismissNotice() {
+    setNoticeDismissed(true);
+    try {
+      localStorage.setItem(LOCAL_NOTICE_KEY, '1');
+    } catch {
+      /* sem armazenamento: o aviso volta na próxima visita */
+    }
+  }
+
   const hasProjects = (projects?.length ?? 0) > 0;
+
+  function emptyTitle(): string {
+    if (query) return 'Nenhum projeto encontrado';
+    if (status !== 'all') return 'Nenhum projeto nesta situação';
+    return filter === 'archived' ? 'Nenhum projeto arquivado' : 'Nenhum projeto ativo';
+  }
+
+  function emptyDescription(): string {
+    if (query) return `Não há projetos ${filter === 'archived' ? 'arquivados' : 'ativos'} correspondentes a "${query}".`;
+    if (status !== 'all') return `Não há projetos com a situação "${STATUS_LABEL[status]}".`;
+    return filter === 'archived'
+      ? 'Projetos arquivados saem da lista principal e ficam somente para consulta.'
+      : 'Todos os seus projetos estão arquivados.';
+  }
 
   return (
     <AppShell>
       <div className={styles.heading}>
-        <div>
+        <div className={styles.titles}>
+          <span className={styles.eyebrow}>Gestão da inovação</span>
           <h1>Meus Projetos</h1>
           <p className={styles.subtitle}>Planejamentos de inovação que você criou ou que foram compartilhados com você.</p>
         </div>
-        <Button variant="primary" icon={<Plus size={18} aria-hidden />} onClick={() => setCreating(true)}>
+        <Button
+          variant="primary"
+          icon={<Plus size={18} aria-hidden />}
+          onClick={() => setCreating(true)}
+          aria-keyshortcuts="N"
+          iconRight={
+            <kbd className={styles.kbd} aria-hidden>
+              N
+            </kbd>
+          }
+        >
           Novo projeto
         </Button>
       </div>
 
-      {repository.mode === 'local' && (
+      {repository.mode === 'local' && !noticeDismissed && (
         <div className={styles.banner}>
           <Banner icon={<HardDrive size={18} aria-hidden />}>
-            <strong>Modo local.</strong> Os projetos ficam salvos apenas neste navegador. Contas, colaboração e
-            sincronização entre dispositivos ficam disponíveis quando a plataforma é conectada ao servidor.
+            <span className={styles.bannerContent}>
+              <span>
+                <strong>Modo local.</strong> Os projetos ficam salvos apenas neste navegador. Contas, colaboração e
+                sincronização entre dispositivos ficam disponíveis quando a plataforma é conectada ao servidor.
+              </span>
+              <IconButton label="Dispensar aviso" size="sm" onClick={dismissNotice}>
+                <X size={16} aria-hidden />
+              </IconButton>
+            </span>
           </Banner>
         </div>
       )}
@@ -166,33 +256,62 @@ export function ProjectsPage() {
 
       {hasProjects && (
         <div className={styles.toolbar}>
-          <label className={styles.search}>
-            <Search size={16} aria-hidden />
-            <span className="sr-only">Pesquisar projetos</span>
-            <input
-              type="search"
-              placeholder="Pesquisar por nome, organização ou responsável"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
+          <div className={styles.filters}>
+            <Segmented<Filter>
+              label="Situação dos projetos"
+              value={filter}
+              onChange={(value) => {
+                setFilter(value);
+                setStatus('all');
+              }}
+              options={[
+                { value: 'active', label: 'Ativos', count: counts.active },
+                { value: 'archived', label: 'Arquivados', count: counts.archived },
+              ]}
             />
-          </label>
-          <Segmented<Filter>
-            label="Situação dos projetos"
-            value={filter}
-            onChange={setFilter}
-            options={[
-              { value: 'active', label: 'Ativos', count: counts.active },
-              { value: 'archived', label: 'Arquivados', count: counts.archived },
-            ]}
-          />
-          <label className={styles.sort}>
-            <span className="sr-only">Ordenar por</span>
-            <Select value={sort} onChange={(event) => setSort(event.target.value as Sort)}>
-              <option value="updated">Atualização mais recente</option>
-              <option value="created">Criação mais recente</option>
-              <option value="name">Nome (A a Z)</option>
-            </Select>
-          </label>
+            <div className={styles.chips} role="group" aria-label="Filtrar por status">
+              {STATUS_FILTERS.map((option) => (
+                <button
+                  key={option}
+                  type="button"
+                  className={styles.chip}
+                  aria-pressed={status === option}
+                  onClick={() => setStatus(option)}
+                >
+                  {option === 'all' ? 'Todos' : STATUS_LABEL[option]}
+                  <span className={styles.chipCount}>{statusCounts[option]}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className={styles.controls}>
+            <label className={styles.search}>
+              <Search size={16} aria-hidden />
+              <span className="sr-only">Pesquisar projetos</span>
+              <input
+                ref={searchRef}
+                type="search"
+                placeholder="Pesquisar projetos"
+                title="Pesquisa por nome, organização ou responsável"
+                value={query}
+                aria-keyshortcuts="/"
+                onChange={(event) => setQuery(event.target.value)}
+              />
+              {!query && (
+                <kbd className={styles.kbdSubtle} aria-hidden>
+                  /
+                </kbd>
+              )}
+            </label>
+            <label className={styles.sort}>
+              <span className="sr-only">Ordenar por</span>
+              <Select value={sort} onChange={(event) => setSort(event.target.value as Sort)}>
+                <option value="updated">Atualização mais recente</option>
+                <option value="created">Criação mais recente</option>
+                <option value="name">Nome (A a Z)</option>
+              </Select>
+            </label>
+          </div>
         </div>
       )}
 
@@ -230,15 +349,20 @@ export function ProjectsPage() {
         <EmptyState
           compact
           icon={<SearchX size={26} aria-hidden />}
-          title={query ? 'Nenhum projeto encontrado' : filter === 'archived' ? 'Nenhum projeto arquivado' : 'Nenhum projeto ativo'}
-          description={
-            query
-              ? `Não há projetos ${filter === 'archived' ? 'arquivados' : 'ativos'} correspondentes a "${query}".`
-              : filter === 'archived'
-                ? 'Projetos arquivados saem da lista principal e ficam somente para consulta.'
-                : 'Todos os seus projetos estão arquivados.'
+          title={emptyTitle()}
+          description={emptyDescription()}
+          action={
+            query || status !== 'all' ? (
+              <Button
+                onClick={() => {
+                  setQuery('');
+                  setStatus('all');
+                }}
+              >
+                {query ? 'Limpar pesquisa' : 'Limpar filtros'}
+              </Button>
+            ) : undefined
           }
-          action={query ? <Button onClick={() => setQuery('')}>Limpar pesquisa</Button> : undefined}
         />
       ) : (
         <div className={styles.grid}>

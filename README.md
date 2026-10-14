@@ -247,7 +247,7 @@ O menu **Exportar** gera o relatório em A4 e o canvas em página única em A3 o
 
 ## Principais funcionalidades
 
-- **Meus Projetos:** criar, abrir, editar dados, duplicar, arquivar, excluir, pesquisar e ordenar planejamentos.
+- **Meus Projetos:** criar, abrir, editar dados, duplicar, arquivar, excluir, pesquisar, ordenar e filtrar planejamentos por status. Cada cartão mostra o progresso nas nove etapas, na ordem do método, e leva direto à próxima etapa pendente. Atalhos de teclado: **N** cria um projeto e **/** abre a pesquisa.
 - **Canvas:** as nove dimensões em uma única tela, na disposição espacial do modelo, com notas editáveis no próprio lugar.
 - **Etapas:** preenchimento guiado, um bloco por vez, com a orientação metodológica e as perguntas norteadoras ao lado.
 - **Salvamento automático** com indicação contínua do estado: salvando, salvo (com horário) ou sem conexão.
@@ -255,6 +255,7 @@ O menu **Exportar** gera o relatório em A4 e o canvas em página única em A3 o
 - **Compartilhamento** por convite (email) e por link de acesso controlado, com papéis de proprietário, editor e visualizador.
 - **Histórico** de quem alterou o quê e quando, e **versões** que podem ser restauradas.
 - **Exportação em PDF** e **impressão** em A4 (relatório paginado) e A3 (canvas em página única).
+- **Tema claro e escuro:** segue a preferência do sistema, com alternância no cabeçalho. Relatórios e impressões saem sempre no tema claro.
 - **Responsividade:** computador, tablet e celular.
 
 A introdução do Capítulo 6 da tese menciona a criação de novos projetos e a exportação do projeto entre os tópicos de uso do software. As duas funcionalidades estão disponíveis nesta versão. O que ainda não está disponível é descrito em [Limitações conhecidas](#limitações-conhecidas).
@@ -310,7 +311,7 @@ Decisões principais:
 | Build | Vite |
 | Componentes acessíveis | Radix UI (diálogo e menu), ícones Lucide |
 | Estilo | CSS Modules e tokens em propriedades CSS |
-| Tipografia | Inter e Source Serif 4, servidas pela própria aplicação |
+| Tipografia | Geist, Geist Mono e Newsreader, servidas pela própria aplicação |
 | Dados, autenticação, tempo real | Supabase (Postgres, Row Level Security, Realtime, Auth) |
 | PDF | @react-pdf/renderer (texto vetorial, fontes embutidas) |
 | Testes | Vitest, Testing Library, Playwright, testes SQL em Postgres, PostgREST |
@@ -564,9 +565,10 @@ Alterações de esquema devem ser feitas sempre por **nova migração numerada**
 
 ## Design System
 
-- **Tokens** em [`src/design/tokens.css`](src/design/tokens.css): cores, tipografia, espaçamento, raios, sombras e movimento. Componentes não declaram valores literais.
+- **Tokens** em [`src/design/tokens.css`](src/design/tokens.css): cores, tipografia, espaçamento, raios, sombras e movimento. Componentes não declaram valores literais. O tema escuro redefine os mesmos tokens em `:root[data-theme='dark']`; a escolha do usuário fica em [`src/lib/theme.ts`](src/lib/theme.ts).
 - **Componentes** em [`src/components/ui`](src/components/ui): botão, campos de formulário, lista de itens, selo, avatar, diálogo e painel lateral, menu, alternância, avisos, estado vazio, esqueleto de carregamento, barra de progresso e faixa informativa.
-- **Tipografia:** Source Serif 4 em títulos e Inter na interface.
+- **Identidade:** papel e grafite como base, cobalto como cor de ação e lima como destaque da marca. O símbolo reproduz a figura do framework com o bloco 1, Planejamento Estratégico, aceso.
+- **Tipografia:** Newsreader em títulos, Geist na interface e Geist Mono em números e contadores.
 - **Cores das dimensões:** definidas uma única vez nos tokens e espelhadas no tema dos PDFs ([`src/features/export/pdf/theme.ts`](src/features/export/pdf/theme.ts)).
 - **Acessibilidade:** navegação por teclado, foco visível, rótulos para leitores de tela, alvos de toque de pelo menos 40 px, respeito à preferência por menos movimento e campos com 16 px em telas de toque para evitar zoom automático.
 - **Responsividade:** o canvas usa a disposição do modelo em telas largas, três colunas em telas médias e lista na ordem de preenchimento em telas pequenas, com um mapa do canvas para navegação.
